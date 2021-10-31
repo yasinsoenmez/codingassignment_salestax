@@ -104,7 +104,7 @@ public class App {
                 "packet of headache pills",
                 ProductType.MEDICAL,
                 Origin.LOCAL,
-                new BigDecimal("27.99")
+                new BigDecimal("9.75")
         );
 
         Product impBoxOfChocolates = new Product(

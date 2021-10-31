@@ -1,7 +1,6 @@
 package soenmez.yasin;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.EnumSet;
 
 public class ImportTax implements Tax {

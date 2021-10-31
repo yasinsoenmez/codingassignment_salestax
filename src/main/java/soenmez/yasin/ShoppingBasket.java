@@ -10,6 +10,7 @@ public class ShoppingBasket {
     private List<Tax> taxes;
 
     private static final String IMPORTED = "imported ";
+    private static final BigDecimal ROUNDING_STEP = new BigDecimal("0.05");
 
     public ShoppingBasket() {
         this.basket = new ArrayList<Order>();
@@ -39,7 +40,8 @@ public class ShoppingBasket {
 
         for (Tax tax : taxes) {
             if (tax.isApplicable(order)) {
-                taxAmount = taxAmount.add(orderTotal.multiply(tax.getRate()));
+                BigDecimal taxRounded = customTaxRounding(orderTotal.multiply(tax.getRate()));
+                taxAmount = taxAmount.add(taxRounded);
             }
         }
         return taxAmount;
@@ -68,5 +70,12 @@ public class ShoppingBasket {
 
     public void emptyBasket() {
         basket = new ArrayList<Order>();
+    }
+
+    public BigDecimal customTaxRounding(BigDecimal amount) {
+        BigDecimal divide = amount.divide(ROUNDING_STEP);
+        BigDecimal rounding = divide.setScale(0, RoundingMode.HALF_UP);
+        BigDecimal multiply = rounding.multiply(ROUNDING_STEP);
+        return multiply;
     }
 }
