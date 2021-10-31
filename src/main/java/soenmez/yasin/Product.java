@@ -4,13 +4,6 @@ import java.math.BigDecimal;
 
 public class Product {
 
-    public enum ProductType {
-        BOOK,
-        FOOD,
-        MEDICAL,
-        OTHER
-    }
-
     private String name;
     private ProductType type;
     private boolean imported;
