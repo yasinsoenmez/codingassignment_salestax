@@ -1,18 +1,19 @@
 package soenmez.yasin;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Product {
 
     private String name;
     private ProductType type;
-    private boolean imported;
+    private Origin origin;
     private BigDecimal price;
 
-    public Product(String name, ProductType type, boolean imported, BigDecimal price) {
+    public Product(String name, ProductType type, Origin origin, BigDecimal price) {
         this.name = name;
         this.type = type;
-        this.imported = imported;
+        this.origin = origin;
         this.price = price;
     }
 
@@ -24,8 +25,8 @@ public class Product {
         return type;
     }
 
-    public boolean isImported() {
-        return imported;
+    public Origin getOrigin() {
+        return origin;
     }
 
     public BigDecimal getPrice() {

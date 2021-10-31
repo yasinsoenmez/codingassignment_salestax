@@ -1,6 +1,7 @@
 package soenmez.yasin;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +36,10 @@ public class ShoppingBasket {
     private BigDecimal calculateTax(Order order) {
         BigDecimal orderTotal = order.getOrderTotal();
         BigDecimal taxAmount = new BigDecimal("0.00");
+
         for (Tax tax : taxes) {
             if (tax.isApplicable(order)) {
-                taxAmount = orderTotal.multiply(tax.getRate());
+                taxAmount = taxAmount.add(orderTotal.multiply(tax.getRate()));
             }
         }
         return taxAmount;
@@ -55,12 +57,16 @@ public class ShoppingBasket {
             total = total.add(priceWithTax);
 
             Product product = order.getProduct();
-            String productName = product.isImported() ? IMPORTED + product.getName() : product.getName();
+            String productName = (product.getOrigin() == Origin.IMPORTED) ? IMPORTED + product.getName() : product.getName();
 
             System.out.println("> " + order.getAmount() + " " + productName + ": " + priceWithTax);
         }
 
         System.out.println("> Sales Taxes: " + totalSalesTax);
         System.out.println("> Total: " + total);
+    }
+
+    public void emptyBasket() {
+        basket = new ArrayList<Order>();
     }
 }
