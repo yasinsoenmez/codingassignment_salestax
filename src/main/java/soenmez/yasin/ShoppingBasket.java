@@ -17,22 +17,13 @@ public class ShoppingBasket {
         this.taxes = new ArrayList<Tax>();
     }
 
-    public void addProduct(Product product, int amount) {
+    public void addOrder(Product product, int amount) {
         basket.add(new Order(product, amount));
     }
 
     public void addTaxSystem(Tax tax) {
         taxes.add(tax);
     }
-
-    public List<Order> getBasket() {
-        return basket;
-    }
-
-    public List<Tax> getTaxes() {
-        return taxes;
-    }
-
 
     private BigDecimal calculateTax(Order order) {
         BigDecimal orderTotal = order.getOrderTotal();
@@ -47,7 +38,7 @@ public class ShoppingBasket {
         return taxAmount;
     }
 
-    public void printReceipt() {
+    public void checkout() {
         BigDecimal totalSalesTax = new BigDecimal("0.00");
         BigDecimal total = new BigDecimal("0.00");
 
@@ -61,21 +52,23 @@ public class ShoppingBasket {
             Product product = order.getProduct();
             String productName = (product.getOrigin() == Origin.IMPORTED) ? IMPORTED + product.getName() : product.getName();
 
-            System.out.println("> " + order.getAmount() + " " + productName + ": " + priceWithTax);
+            System.out.println(order.getAmount() + " " + productName + ": " + priceWithTax);
         }
 
-        System.out.println("> Sales Taxes: " + totalSalesTax);
-        System.out.println("> Total: " + total);
+        System.out.println("Sales Taxes: " + totalSalesTax);
+        System.out.println("Total: " + total);
+
+        emptyBasket();
+        System.out.println();
     }
 
     public void emptyBasket() {
         basket = new ArrayList<Order>();
     }
 
-    public BigDecimal customTaxRounding(BigDecimal amount) {
+    private BigDecimal customTaxRounding(BigDecimal amount) {
         BigDecimal divide = amount.divide(ROUNDING_STEP);
-        BigDecimal rounding = divide.setScale(0, RoundingMode.HALF_UP);
-        BigDecimal multiply = rounding.multiply(ROUNDING_STEP);
-        return multiply;
+        BigDecimal round = divide.setScale(0, RoundingMode.HALF_UP);
+        return round.multiply(ROUNDING_STEP);
     }
 }

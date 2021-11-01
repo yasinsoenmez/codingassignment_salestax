@@ -1,7 +1,10 @@
 package soenmez.yasin;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Hello world!
@@ -22,20 +25,138 @@ public class App {
         > 1 packet of headache pills at 9.75
         > 1 box of imported chocolates at 11.25
      */
+    private static final String IMPORTED = "imported";
+    private static final List<String> FOOD = List.of("chocolate", "chocolates");
+    public static final List<String> MEDICINE = List.of("pills");
+    public static final List<String> BOOK = List.of("book");
 
     public static void main(String[] args) {
+
+        // initialize shopping basket
+        ShoppingBasket basket = new ShoppingBasket();
+        setUpTaxSystem(basket);
+
+        String input =
+                "1 book at 12.49\n" +
+                "1 music CD at 14.99\n" +
+                "1 chocolate bar at 0.85";
+
+        parseShoppingBasket(input, basket);
+        basket.checkout();
+
+        input = "1 imported box of chocolates at 10.00\n" +
+                "1 imported bottle of perfume at 47.50";
+
+        parseShoppingBasket(input, basket);
+        basket.checkout();
+
+        input = "1 imported bottle of perfume at 27.99\n" +
+                "1 bottle of perfume at 18.99\n" +
+                "1 packet of headache pills at 9.75\n" +
+                "1 box of imported chocolates at 11.25";
+
+        parseShoppingBasket(input, basket);
+        basket.checkout();
+
+        exampleInput(basket);
+    }
+
+    public static void setUpTaxSystem(ShoppingBasket basket) {
+        // Setting up tax system
         Tax salesTax = new SalesTax(
                 "sales tax",
                 new BigDecimal("0.1"),
                 EnumSet.of(ProductType.BOOK, ProductType.FOOD, ProductType.MEDICAL));
+
         Tax importTax = new ImportTax(
                 "import duty",
                 new BigDecimal("0.05"),
                 EnumSet.of(Origin.LOCAL));
 
-        ShoppingBasket basket = new ShoppingBasket();
         basket.addTaxSystem(salesTax);
         basket.addTaxSystem(importTax);
+    }
+
+    public static void parseShoppingBasket(String input, ShoppingBasket basket) {
+        var lines = input.lines().collect(Collectors.toList());
+
+        for (String line : lines) {
+            var words = line.split(" ");
+
+            try {
+                var product = parseProduct(words);
+                var amount = parseAmount(words);
+
+                basket.addOrder(product, amount);
+            } catch (Exception e) {
+                System.out.println("Error parsing order: " + line);
+            }
+        }
+    }
+
+    public static Product parseProduct(String[] input)  {
+        var price = parsePrice(input);
+        var origin = parseOrigin(input);
+        var name = parseProductName(input);
+        var productType = parseProductType(input);
+
+        return new Product(
+                name,
+                productType,
+                origin,
+                price
+        );
+    }
+
+    public static String parseProductName(String[] input)  {
+        return Arrays.stream(input)
+                .limit(input.length - 2)
+                .skip(1)
+                .filter(s -> !s.equals(IMPORTED))
+                .collect(Collectors.joining(" "));
+    }
+
+    public static int parseAmount(String[] input)  {
+        var amount = Integer.parseInt(input[0]);
+
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be higher than zero.");
+        }
+
+        return amount;
+    }
+
+    public static BigDecimal parsePrice(String[] input)  {
+        var price = new BigDecimal(input[input.length - 1]);
+
+        if (price.compareTo(new BigDecimal("0.0")) <= 0) {
+            throw new IllegalArgumentException("Price must be higher than zero.");
+        }
+
+        return price;
+    }
+
+    public static Origin parseOrigin(String[] input) {
+        return Arrays.asList(input).contains(IMPORTED) ? Origin.IMPORTED : Origin.LOCAL;
+    }
+
+    public static ProductType parseProductType(String[] input) {
+        ProductType productType;
+
+        if (Arrays.stream(input).anyMatch(FOOD::contains)) {
+            productType = ProductType.FOOD;
+        } else if (Arrays.stream(input).anyMatch(MEDICINE::contains)) {
+            productType = ProductType.MEDICAL;
+        } else if (Arrays.stream(input).anyMatch(BOOK::contains)) {
+            productType = ProductType.BOOK;
+        } else {
+            productType = ProductType.OTHER;
+        }
+
+        return productType;
+    }
+
+    public static void exampleInput(ShoppingBasket basket) {
 
         Product book = new Product(
                 "book",
@@ -55,14 +176,11 @@ public class App {
                 Origin.LOCAL,
                 new BigDecimal("0.85"));
 
-        basket.addProduct(book, 1);
-        basket.addProduct(musicCD, 1);
-        basket.addProduct(chocolateBar, 1);
+        basket.addOrder(book, 1);
+        basket.addOrder(musicCD, 1);
+        basket.addOrder(chocolateBar, 1);
 
-        basket.printReceipt();
-
-        basket.emptyBasket();
-        System.out.println();
+        basket.checkout();
 
         Product impBoxChocolate = new Product(
                 "box of chocolates",
@@ -78,13 +196,10 @@ public class App {
                 new BigDecimal("47.50")
         );
 
-        basket.addProduct(impBoxChocolate, 1);
-        basket.addProduct(impBottlePerfume, 1);
+        basket.addOrder(impBoxChocolate, 1);
+        basket.addOrder(impBottlePerfume, 1);
 
-        basket.printReceipt();
-
-        basket.emptyBasket();
-        System.out.println();
+        basket.checkout();
 
         Product impBottlePerfume2 = new Product(
                 "bottle of perfume",
@@ -114,14 +229,11 @@ public class App {
                 new BigDecimal("11.25")
         );
 
-        basket.addProduct(impBottlePerfume2, 1);
-        basket.addProduct(bottlePerfume, 1);
-        basket.addProduct(packetOfPills, 1);
-        basket.addProduct(impBoxOfChocolates, 1);
+        basket.addOrder(impBottlePerfume2, 1);
+        basket.addOrder(bottlePerfume, 1);
+        basket.addOrder(packetOfPills, 1);
+        basket.addOrder(impBoxOfChocolates, 1);
 
-        basket.printReceipt();
-
-        basket.emptyBasket();
-        System.out.println();
+        basket.checkout();
     }
 }
