@@ -9,6 +9,12 @@ public class SalesTax implements Tax {
     private EnumSet<ProductType> taxExceptions;
 
     public SalesTax(String name, BigDecimal rate, EnumSet<ProductType> taxExceptions) {
+        if (name == null || rate == null || taxExceptions == null) {
+            throw new IllegalArgumentException("Null is not accepted.");
+        }
+        if (rate.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Tax rate must be higher than zero.");
+        }
         this.name = name;
         this.rate = rate;
         this.taxExceptions = taxExceptions;

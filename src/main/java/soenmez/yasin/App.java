@@ -40,6 +40,7 @@ public class App {
                 if (orders.length() == 0) {
                     break;
                 }
+
                 parseShoppingBasket(orders.toString(), basket);
                 basket.checkout();
                 orders.setLength(0);
@@ -119,7 +120,7 @@ public class App {
     public static BigDecimal parsePrice(String[] input)  {
         var price = new BigDecimal(input[input.length - 1]);
 
-        if (price.compareTo(new BigDecimal("0.0")) <= 0) {
+        if (price.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Price must be higher than zero.");
         }
 

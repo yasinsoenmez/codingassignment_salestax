@@ -40,7 +40,7 @@ public class ShoppingBasket {
 
     public void checkout() {
         var totalSalesTax = BigDecimal.ZERO;
-        var total =BigDecimal.ZERO;
+        var total = BigDecimal.ZERO;
 
         for (Order order : basket) {
             var salesTax = calculateTax(order);
