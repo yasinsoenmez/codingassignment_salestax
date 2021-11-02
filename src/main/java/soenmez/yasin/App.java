@@ -85,6 +85,10 @@ public class App {
     }
 
     public static Product parseProduct(String[] input)  {
+        if (input.length < 3) {
+            throw new IllegalArgumentException("Not enough arguments.");
+        }
+
         var price = parsePrice(input);
         var origin = parseOrigin(input);
         var name = parseProductName(input);

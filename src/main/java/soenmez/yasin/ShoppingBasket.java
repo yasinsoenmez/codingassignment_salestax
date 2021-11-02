@@ -72,4 +72,8 @@ public class ShoppingBasket {
                 .setScale(0, RoundingMode.HALF_UP)
                 .multiply(ROUNDING_STEP);
     }
+
+    public List<Order> getBasket() {
+        return basket;
+    }
 }
