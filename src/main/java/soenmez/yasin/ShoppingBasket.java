@@ -90,4 +90,8 @@ public class ShoppingBasket {
     public BigDecimal getTotalPrice() {
         return totalPrice;
     }
+
+    public List<Tax> getTaxes() {
+        return taxes;
+    }
 }
