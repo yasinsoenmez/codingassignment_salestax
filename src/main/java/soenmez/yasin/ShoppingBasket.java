@@ -9,12 +9,17 @@ public class ShoppingBasket {
     private List<Order> basket;
     private List<Tax> taxes;
 
+    private BigDecimal totalSalesTax;
+    private BigDecimal totalPrice;
+
     private static final String IMPORTED = "imported ";
     private static final BigDecimal ROUNDING_STEP = new BigDecimal("0.05");
 
     public ShoppingBasket() {
         this.basket = new ArrayList<Order>();
         this.taxes = new ArrayList<Tax>();
+        totalSalesTax = BigDecimal.ZERO;
+        totalPrice = BigDecimal.ZERO;
     }
 
     public void addOrder(Product product, int amount) {
@@ -39,34 +44,35 @@ public class ShoppingBasket {
     }
 
     public void checkout() {
-        var totalSalesTax = BigDecimal.ZERO;
-        var total = BigDecimal.ZERO;
-
         for (Order order : basket) {
             var salesTax = calculateTax(order);
             var priceWithTax = order.getOrderTotal().add(salesTax);
+            order.setTotalPriceWithTax(priceWithTax);
 
             totalSalesTax = totalSalesTax.add(salesTax);
-            total = total.add(priceWithTax);
+            totalPrice = totalPrice.add(priceWithTax);
+        }
+    }
 
+    public void printReceipt() {
+        for (Order order : basket) {
             var product = order.getProduct();
             var productName = (product.getOrigin() == Origin.IMPORTED) ? IMPORTED + product.getName() : product.getName();
-
-            System.out.println(order.getAmount() + " " + productName + ": " + priceWithTax);
+            System.out.println(order.getAmount() + " " + productName + ": " + order.getTotalPriceWithTax());
         }
 
         System.out.println("Sales Taxes: " + totalSalesTax);
-        System.out.println("Total: " + total);
-
-        emptyBasket();
+        System.out.println("Total: " + totalPrice);
         System.out.println();
     }
 
     public void emptyBasket() {
         basket = new ArrayList<Order>();
+        totalSalesTax = BigDecimal.ZERO;
+        totalPrice = BigDecimal.ZERO;
     }
 
-    private BigDecimal customTaxRounding(BigDecimal amount) {
+    static private BigDecimal customTaxRounding(BigDecimal amount) {
         return amount
                 .divide(ROUNDING_STEP)
                 .setScale(0, RoundingMode.HALF_UP)
@@ -75,5 +81,13 @@ public class ShoppingBasket {
 
     public List<Order> getBasket() {
         return basket;
+    }
+
+    public BigDecimal getTotalSalesTax() {
+        return totalSalesTax;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
     }
 }

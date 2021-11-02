@@ -43,6 +43,8 @@ public class App {
 
                 parseShoppingBasket(orders.toString(), basket);
                 basket.checkout();
+                basket.printReceipt();
+                basket.emptyBasket();
                 orders.setLength(0);
                 System.out.println(INSTRUCTIONS);
             } else {
@@ -173,12 +175,16 @@ public class App {
 
         parseShoppingBasket(input, basket);
         basket.checkout();
+        basket.printReceipt();
+        basket.emptyBasket();
 
         input = "1 imported box of chocolates at 10.00\n" +
                 "1 imported bottle of perfume at 47.50";
 
         parseShoppingBasket(input, basket);
         basket.checkout();
+        basket.printReceipt();
+        basket.emptyBasket();
 
         input = "1 imported bottle of perfume at 27.99\n" +
                 "1 bottle of perfume at 18.99\n" +
@@ -187,6 +193,8 @@ public class App {
 
         parseShoppingBasket(input, basket);
         basket.checkout();
+        basket.printReceipt();
+        basket.emptyBasket();
 
         /*Product book = new Product(
                 "book",

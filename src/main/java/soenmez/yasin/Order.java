@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public class Order {
     private Product product;
     private int amount;
+    private BigDecimal totalPriceWithTax;
 
     public Order(Product order, int amount) {
         if (order == null) {
@@ -15,6 +16,7 @@ public class Order {
         }
         this.product = order;
         this.amount = amount;
+        totalPriceWithTax = BigDecimal.ZERO;
     }
 
     public Product getProduct() {
@@ -27,5 +29,16 @@ public class Order {
 
     public BigDecimal getOrderTotal() {
         return product.getPrice().multiply(new BigDecimal(amount));
+    }
+
+    public BigDecimal getTotalPriceWithTax() {
+        return totalPriceWithTax;
+    }
+
+    public void setTotalPriceWithTax(BigDecimal totalPriceWithTax) {
+        if (totalPriceWithTax.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Price must be higher than zero.");
+        }
+        this.totalPriceWithTax = totalPriceWithTax;
     }
 }
