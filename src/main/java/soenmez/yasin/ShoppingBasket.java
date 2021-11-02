@@ -26,12 +26,12 @@ public class ShoppingBasket {
     }
 
     private BigDecimal calculateTax(Order order) {
-        BigDecimal orderTotal = order.getOrderTotal();
-        BigDecimal taxAmount = new BigDecimal("0.00");
+        var orderTotal = order.getOrderTotal();
+        var taxAmount = BigDecimal.ZERO;
 
         for (Tax tax : taxes) {
             if (tax.isApplicable(order)) {
-                BigDecimal taxRounded = customTaxRounding(orderTotal.multiply(tax.getRate()));
+                var taxRounded = customTaxRounding(orderTotal.multiply(tax.getRate()));
                 taxAmount = taxAmount.add(taxRounded);
             }
         }
@@ -39,18 +39,18 @@ public class ShoppingBasket {
     }
 
     public void checkout() {
-        BigDecimal totalSalesTax = new BigDecimal("0.00");
-        BigDecimal total = new BigDecimal("0.00");
+        var totalSalesTax = BigDecimal.ZERO;
+        var total =BigDecimal.ZERO;
 
         for (Order order : basket) {
-            BigDecimal salesTax = calculateTax(order);
-            BigDecimal priceWithTax = order.getOrderTotal().add(salesTax);
+            var salesTax = calculateTax(order);
+            var priceWithTax = order.getOrderTotal().add(salesTax);
 
             totalSalesTax = totalSalesTax.add(salesTax);
             total = total.add(priceWithTax);
 
-            Product product = order.getProduct();
-            String productName = (product.getOrigin() == Origin.IMPORTED) ? IMPORTED + product.getName() : product.getName();
+            var product = order.getProduct();
+            var productName = (product.getOrigin() == Origin.IMPORTED) ? IMPORTED + product.getName() : product.getName();
 
             System.out.println(order.getAmount() + " " + productName + ": " + priceWithTax);
         }
@@ -67,8 +67,9 @@ public class ShoppingBasket {
     }
 
     private BigDecimal customTaxRounding(BigDecimal amount) {
-        BigDecimal divide = amount.divide(ROUNDING_STEP);
-        BigDecimal round = divide.setScale(0, RoundingMode.HALF_UP);
-        return round.multiply(ROUNDING_STEP);
+        return amount
+                .divide(ROUNDING_STEP)
+                .setScale(0, RoundingMode.HALF_UP)
+                .multiply(ROUNDING_STEP);
     }
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 /**
@@ -11,24 +12,14 @@ import java.util.stream.Collectors;
  *
  */
 public class App {
-    /*
-    Input 1:
-        > 1 book at 12.49
-        > 1 music CD at 14.99
-        > 1 chocolate bar at 0.85
-    Input 2:
-        > 1 imported box of chocolates at 10.00
-        > 1 imported bottle of perfume at 47.50
-    Input 3:
-        > 1 imported bottle of perfume at 27.99
-        > 1 bottle of perfume at 18.99
-        > 1 packet of headache pills at 9.75
-        > 1 box of imported chocolates at 11.25
-     */
-    private static final String IMPORTED = "imported";
-    private static final List<String> FOOD = List.of("chocolate", "chocolates");
-    public static final List<String> MEDICINE = List.of("pills");
-    public static final List<String> BOOK = List.of("book");
+
+    public static final String IMPORTED = "imported";
+    public static final List<String> FOOD = List.of("chocolate", "chocolates");
+    public static final List<String> MEDICINE = List.of("pill", "pills");
+    public static final List<String> BOOK = List.of("book", "books");
+    public static final String AT = "at";
+    public static final String INSTRUCTIONS = "Type in an order. Checkout with ENTER on blank line. " +
+                                              "Exit with ENTER on empty order.";
 
     public static void main(String[] args) {
 
@@ -36,29 +27,27 @@ public class App {
         ShoppingBasket basket = new ShoppingBasket();
         setUpTaxSystem(basket);
 
-        String input =
-                "1 book at 12.49\n" +
-                "1 music CD at 14.99\n" +
-                "1 chocolate bar at 0.85";
-
-        parseShoppingBasket(input, basket);
-        basket.checkout();
-
-        input = "1 imported box of chocolates at 10.00\n" +
-                "1 imported bottle of perfume at 47.50";
-
-        parseShoppingBasket(input, basket);
-        basket.checkout();
-
-        input = "1 imported bottle of perfume at 27.99\n" +
-                "1 bottle of perfume at 18.99\n" +
-                "1 packet of headache pills at 9.75\n" +
-                "1 box of imported chocolates at 11.25";
-
-        parseShoppingBasket(input, basket);
-        basket.checkout();
-
         exampleInput(basket);
+
+        Scanner scanner = new Scanner(System.in);
+        StringBuffer orders = new StringBuffer();
+
+        System.out.println(INSTRUCTIONS);
+
+        while (true) {
+            String line = scanner.nextLine();
+            if (line.isEmpty()) {
+                if (orders.length() == 0) {
+                    break;
+                }
+                parseShoppingBasket(orders.toString(), basket);
+                basket.checkout();
+                orders.setLength(0);
+                System.out.println(INSTRUCTIONS);
+            } else {
+                orders.append(line).append('\n');
+            }
+        }
     }
 
     public static void setUpTaxSystem(ShoppingBasket basket) {
@@ -110,9 +99,10 @@ public class App {
 
     public static String parseProductName(String[] input)  {
         return Arrays.stream(input)
-                .limit(input.length - 2)
+                .limit(input.length - 1)
                 .skip(1)
                 .filter(s -> !s.equals(IMPORTED))
+                .filter(s -> !s.equals(AT))
                 .collect(Collectors.joining(" "));
     }
 
@@ -158,7 +148,42 @@ public class App {
 
     public static void exampleInput(ShoppingBasket basket) {
 
-        Product book = new Product(
+    /*
+        Input 1:
+            > 1 book at 12.49
+            > 1 music CD at 14.99
+            > 1 chocolate bar at 0.85
+        Input 2:
+            > 1 imported box of chocolates at 10.00
+            > 1 imported bottle of perfume at 47.50
+        Input 3:
+            > 1 imported bottle of perfume at 27.99
+            > 1 bottle of perfume at 18.99
+            > 1 packet of headache pills at 9.75
+            > 1 box of imported chocolates at 11.25
+    */
+        String input = "1 book at 12.49\n" +
+                       "1 music CD at 14.99\n" +
+                       "1 chocolate bar at 0.85";
+
+        parseShoppingBasket(input, basket);
+        basket.checkout();
+
+        input = "1 imported box of chocolates at 10.00\n" +
+                "1 imported bottle of perfume at 47.50";
+
+        parseShoppingBasket(input, basket);
+        basket.checkout();
+
+        input = "1 imported bottle of perfume at 27.99\n" +
+                "1 bottle of perfume at 18.99\n" +
+                "1 packet of headache pills at 9.75\n" +
+                "1 box of imported chocolates at 11.25";
+
+        parseShoppingBasket(input, basket);
+        basket.checkout();
+
+        /*Product book = new Product(
                 "book",
                 ProductType.BOOK ,
                 Origin.LOCAL,
@@ -234,6 +259,6 @@ public class App {
         basket.addOrder(packetOfPills, 1);
         basket.addOrder(impBoxOfChocolates, 1);
 
-        basket.checkout();
+        basket.checkout();*/
     }
 }
