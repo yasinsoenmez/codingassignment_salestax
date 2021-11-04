@@ -75,7 +75,7 @@ public class ShoppingBasket {
     static private BigDecimal customTaxRounding(BigDecimal amount) {
         return amount
                 .divide(ROUNDING_STEP)
-                .setScale(0, RoundingMode.HALF_UP)
+                .setScale(0, RoundingMode.UP)
                 .multiply(ROUNDING_STEP);
     }
 

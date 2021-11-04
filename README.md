@@ -17,6 +17,7 @@ I used Maven as the build system and JUnit for Testing.
 ```shell
     java -jar target/codingassignment_salestax-1.0-SNAPSHOT.jar 
 ```
+
 The Application will first execute the input from the assignment.
 After that the user can type their own orders. 
 
