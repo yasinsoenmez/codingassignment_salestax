@@ -34,6 +34,7 @@ be extracted and put at the beginning of the output. Used *at* will be discarded
 - The last element needs to be a decimal number and is assumed to be the price of one product.
   - I can not be sure because in the example input only one of every product is used.
   - So if you type *2 chocolates at 5.00* the total amount will be *10.00*
+  - *BigDecimal* is used internally for precise decimals. In a real project it would be more complicated, e.g. handling currency, different local comma separators etc.
 - The remaining elements in the middle are assumed to be part of the name, except for use of *imported* and *at*.
   - The example input suggest that *imported* can be used at any place in the middle, but the output has to put it at the beginning.
   - *at* will be discarded and only separates name and price in the input. In my implementation it can be used but is not necessary.
