@@ -30,7 +30,7 @@ public class App {
         exampleInput(basket);
 
         Scanner scanner = new Scanner(System.in);
-        StringBuffer orders = new StringBuffer();
+        StringBuilder orders = new StringBuilder();
 
         System.out.println(INSTRUCTIONS);
 
@@ -51,6 +51,7 @@ public class App {
                 orders.append(line).append('\n');
             }
         }
+        scanner.close();
     }
 
     public static void setUpTaxSystem(ShoppingBasket basket) {
